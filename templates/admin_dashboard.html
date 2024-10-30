@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            background-color: #333;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            position: relative;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #444;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Welcome message */
+        .welcome {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        /* Timer styling */
+        .timer {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: #007bff;
+            padding: 5px;
+            border-radius: 5px;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+
+        .log_out {
+            padding: 10px 20px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Bus timetable list */
+        .bus-timetable {
+            margin-top: 20px;
+        }
+
+        .bus-timetable h2 {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .bus-timetable table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .bus-timetable th,
+        .bus-timetable td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        .bus-timetable th {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .bus-timetable td {
+            background-color: #555;
+            color: white;
+        }
+
+        /* General Styles */
+
+        /* Table Styles */
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 18px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #dddddd;
+        }
+
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        .styled-table tbody tr:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+
+        /* Route Styles */
+        .route-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .route-list li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+
+        .route-list li:hover {
+            background-color: #f1f9f5;
+        }
+
+        .stop-name {
+            font-weight: bold;
+            color: #009879;
+            font-size: 16px;
+        }
+
+        .stop-time {
+            font-size: 14px;
+            color: #555;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            .styled-table {
+                font-size: 16px;
+            }
+
+            .route-list li {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .stop-name {
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+
+    <script>
+        // Set the timer for 5 minutes (300 seconds)
+        let timeLeft = 300;
+
+        window.onload = function () {
+            const timerElement = document.getElementById('timer');
+
+            function updateTimer() {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerElement.textContent = `Session expires in: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    window.location.href = "{{ url_for('logout') }}";  // Redirect to logout
+                }
+                timeLeft--;
+            }
+
+            const timerInterval = setInterval(updateTimer, 1000);
+        };
+    </script>
+
+</head>
+
+<body>
+    <!-- Timer will be displayed in the top-right corner -->
+    <div class="timer" id="timer">Session Expires in: 05:00</div>
+
+    <div class="container">
+        <!-- Welcome Message -->
+
+
+        <h1>Admin Dashboard</h1>
+
+
+        <div style="text-align: left;">
+            <span>Welcome, <b>{{ user_name }}</b></span>
+            <div id="timer" style="font-size: 18px;"></div>
+
+        </div>
+
+        <div class="button-container">
+            <div class="button-container">
+                <a href="{{ url_for('update_timetable') }}" class="button">Update Bus Timetable</a>
+                <a href="{{url_for('admin')}}" class="button">Add Bus Details</a>
+                <a href="{{ url_for('update_profile') }}" class="button">Update Profile</a>
+
+                <a href="{{ url_for('logout') }}" class="log_out">Logout</a>
+            </div>
+
+        </div>
+
+        <!-- Bus Timetable Section -->
+        <div class="bus-timetable">
+            <h2>Registered Bus Timetables</h2>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Bus Number</th>
+                        <th>Route</th>
+                        <th>Departure Time</th>
+                        <th>Arrival Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bus in buses %}
+                    <tr>
+                        <td>{{ bus['bus_number'] }}</td>
+
+                        <!-- Format the route -->
+                        <td>
+                            <ul class="route-list">
+                                {% for stop in bus['route'] %}
+                                <li>
+                                    <span class="stop-name">Stop: {{ stop['stop'] }}</span>
+                                    <span class="stop-time">Time: {{ stop['time'] }}</span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+
+                        <!-- Set the first stop time as the departure time -->
+                        <td>
+                            {% if bus['route'] %}
+                            {{ bus['route'][0]['time'] }}
+                            {% else %}
+                            N/A
+                            {% endif %}
+                        </td>
+
+                        <!-- Set the last stop time as the arrival time -->
+                        <td>
+                            {% if bus['route'] %}
+                            {{ bus['route'][-1]['time'] }}
+                            {% else %}
+                            N/A
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</body>
+
+</html>

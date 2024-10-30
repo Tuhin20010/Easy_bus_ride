@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Results</title>
+    <style>
+        body {
+            background-color: #2c3e50;
+            font-family: 'Arial', sans-serif;
+            color: #ecf0f1;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #34495e;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 32px;
+            color: #ecf0f1;
+            margin-bottom: 30px;
+            letter-spacing: 1.5px;
+            border-bottom: 2px solid #2980b9;
+            padding-bottom: 10px;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #d5dbdb;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .results-table th {
+            background-color: #2980b9;
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .results-table td {
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .results-table tr:nth-child(odd) {
+            background-color: #e9f7ef;
+        }
+
+        .results-table tr:nth-child(even) {
+            background-color: #fef9e7;
+        }
+
+        .results-table tr:hover {
+            background-color: #d5dbdb;
+            transition: background-color 0.3s ease;
+        }
+
+        .stop-list {
+            padding: 0;
+            margin: 0;
+            list-style-type: none;
+        }
+
+        .stop-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #dcdcdc;
+            font-size: 14px;
+        }
+
+        .stop-list .time {
+            font-weight: bold;
+            color: #e74c3c;
+            font-size: 15px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            background-color: #f39c12;
+            border: 1px solid #e67e22;
+            border-radius: 5px;
+            color: #fff;
+        }
+
+        .sort-options {
+            text-align: right;
+            margin-bottom: 10px;
+        }
+
+        .sort-options select {
+            padding: 8px 12px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #bdc3c7;
+            background-color: #ecf0f1;
+            color: #2c3e50;
+            cursor: pointer;
+        }
+
+        .sort-options select:hover {
+            background-color: #d5dbdb;
+        }
+
+        .sort-options label {
+            font-size: 14px;
+            color: #ecf0f1;
+            margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+                margin: 20px auto;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .results-table th,
+            .results-table td {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .sort-options select {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Bus Results from {{ source }} to {{ destination }}</h1>
+
+        <div class="sort-options">
+            <label for="sort-by-time">Sort by:</label>
+            <select id="sort-by-time" onchange="sortByTime()">
+                <option value="default">Default</option>
+                <option value="departure-asc">Departure Time (Ascending)</option>
+                <option value="departure-desc">Departure Time (Descending)</option>
+                <option value="arrival-asc">Arrival Time (Ascending)</option>
+                <option value="arrival-desc">Arrival Time (Descending)</option>
+            </select>
+        </div>
+
+        {% if buses %}
+        <table class="results-table" id="bus-table">
+            <thead>
+                <tr>
+                    <th>Bus Number</th>
+                    <th>Bus Name</th>
+                    <th>Stops</th>
+                    <th>Departure Time</th>
+                    <th>Arrival Time</th>
+                </tr>
+            </thead>
+            <tbody id="bus-results">
+                {% for bus in buses %}
+                <tr>
+                    <td>{{ bus['bus_number'] }}</td>
+                    <td>{{ bus['bus_name'] }}</td>
+                    <td>
+                        <ul class="stop-list">
+                            {% for stop in bus['filtered_route'] %}
+                            <li>{{ stop['stop'] }} - <span class="time">{{ stop['time'] }}</span></li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>{{ bus['filtered_route'][0]['time'] }}</td> <!-- Departure Time -->
+                    <td>{{ bus['filtered_route'][-1]['time'] }}</td> <!-- Arrival Time -->
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="no-results">
+            <p>No buses found between {{ source }} and {{ destination }}.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function sortByTime() {
+            var table = document.getElementById("bus-table");
+            var rows = Array.from(table.rows).slice(1);  // Exclude the header row
+            var sortOption = document.getElementById("sort-by-time").value;
+
+            rows.sort(function (a, b) {
+                var departureA = a.cells[3].innerText.trim();  // Departure time (column 4)
+                var departureB = b.cells[3].innerText.trim();
+                var arrivalA = a.cells[4].innerText.trim();  // Arrival time (column 5)
+                var arrivalB = b.cells[4].innerText.trim();
+
+                if (sortOption === "departure-asc") {
+                    return new Date('1970/01/01 ' + departureA) - new Date('1970/01/01 ' + departureB);
+                } else if (sortOption === "departure-desc") {
+                    return new Date('1970/01/01 ' + departureB) - new Date('1970/01/01 ' + departureA);
+                } else if (sortOption === "arrival-asc") {
+                    return new Date('1970/01/01 ' + arrivalA) - new Date('1970/01/01 ' + arrivalB);
+                } else if (sortOption === "arrival-desc") {
+                    return new Date('1970/01/01 ' + arrivalB) - new Date('1970/01/01 ' + arrivalA);
+                } else {
+                    return 0; // Default, no sorting
+                }
+            });
+
+            // Rebuild the table with the sorted rows
+            var tbody = document.getElementById("bus-results");
+            tbody.innerHTML = "";
+            rows.forEach(function (row) {
+                tbody.appendChild(row);
+            });
+        }
+    </script>
+</body>
+
+</html>

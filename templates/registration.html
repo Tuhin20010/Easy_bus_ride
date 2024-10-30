@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Ride App - Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        /* Navigation bar */
+        .navbar {
+            background-color: #333;
+            overflow: hidden;
+        }
+        .navbar a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+        .navbar a:hover {
+            background-color: #fffefe;
+            color: black;
+            animation: 2s;
+            
+        }
+        .navbar img {
+            float: left;
+            padding: 5px;
+            height: 60px;
+        }
+        /* Container for registration form */
+        .container {
+            max-width: 400px;
+            margin: 25px auto;
+            padding: 15px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-size: 13px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 15px;
+        }
+       
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        input[type="text"], input[type="email"], input[type="tel"], input[type="password"] {
+            width: calc(100% - 10px);
+            padding: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            padding: 12px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 25%;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        /* Flash messages styling */
+        .flashes {
+            margin-top: 20px;
+            list-style: none;
+            padding: 0;
+        }
+        .flashes li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .flashes li.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .flashes li.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .footer {
+            background-color: white;
+            color: rgb(0, 0, 0);
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        .footer img {
+            height: 40px;
+            vertical-align: middle;
+        }
+        .marquee {
+            background-color: #ffcc00;
+            padding: 10px;
+            font-size: 18px;
+            color: #333;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <img src="{{ url_for('static', filename='main logo.png') }}" alt="Bus Ride App Logo">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('search') }}">Bus Search</a>
+        <a href="{{ url_for('registration') }}">Owner Registration</a>
+        <a href="{{ url_for('login') }}">Owner login</a>
+        <a href="#">Contact Us</a>
+    </div>
+    <div class="marquee">
+        <marquee>Special Offer: Get 2 Bus Details addition free for Owner ! Limited time only!</marquee>
+    </div>
+    <!-- Registration Form Container -->
+    <div class="container">
+        <h1>Registration</h1>
+        <form action="{{ url_for('registration') }}" method="POST">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="mobile">Mobile No</label>
+                <input type="tel" id="mobile" name="mobile" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+            </div>
+           <center> <button type="submit">Register</button>
+           <p>Already have an account ? <a href="{{url_for('login')}}">log in</a></p></center>
+        </form>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% endwith %}
+    </div>
+    <div class="footer">
+        
+        <img src="{{ url_for('static', filename='main logo.png') }}" alt="Small Bus Ride App Logo">
+        <p>&copy; 2024 Bus Ride App</p>
+    </div>
+</body>
+</html>

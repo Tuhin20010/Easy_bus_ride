@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Bus Timetable</title>
+    <style>
+        body {
+            background-color: #333;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #444;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        input[type="text"] {
+            width: 40%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #stopsContainer {
+            margin-top: 20px;
+        }
+
+        h3 {
+            margin-top: 20px;
+        }
+
+        button[type="button"] {
+            background-color: #dc3545;
+            /* Red for remove button */
+        }
+
+        button[type="button"]:hover {
+            background-color: #c82333;
+            /* Darker red */
+        }
+    </style>
+    <script>
+        // JavaScript function to dynamically add stop input fields
+        function addStop() {
+            var stopsContainer = document.getElementById('stopsContainer');
+            var newStopDiv = document.createElement('div');
+
+            newStopDiv.innerHTML = `
+                <label>Stop:</label>
+                <input type="text" name="stop[]" required>
+                <label>Time:</label>
+                <input type="text" name="time[]" required>
+                <button type="button" onclick="removeStop(this)">Remove</button>
+            `;
+            stopsContainer.appendChild(newStopDiv);
+        }
+
+        function removeStop(button) {
+            button.parentElement.remove();
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Update Bus Timetable</h1>
+
+        <form method="POST">
+            <label for="bus_number">Bus Number:</label>
+            <input type="text" id="bus_number" name="bus_number" required>
+            <button type="submit">Check Bus</button>
+        </form>
+
+        {% if bus %}
+        <h2>Current Timetable for Bus Number: {{ bus['bus_number'] }}</h2>
+        <form method="POST">
+            <h3>Stops</h3>
+            <div id="stopsContainer">
+                {% for stop in bus['route'] %}
+                <div>
+                    <label>Stop:</label>
+                    <input type="text" name="stop[]" value="{{ stop['stop'] }}" required>
+                    <label>Time:</label>
+                    <input type="text" name="time[]" value="{{ stop['time'] }}" required>
+                    <button type="button" onclick="removeStop(this)">Remove</button>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" onclick="addStop()">Add Stop</button>
+            <button type="submit" name="update">Update Timetable</button>
+        </form>
+        {% elif 'This bus is not registered yet!' in get_flashed_messages() %}
+        <p style="color: red;">This bus is not registered yet!</p>
+        {% endif %}
+    </div>
+</body>
+
+</html>

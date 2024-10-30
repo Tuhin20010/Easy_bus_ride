@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy Bus Ride</title>
+    <style>
+        body {
+            background-color: #ffffff;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            text-align: center;
+        }
+
+        .search-container {
+            background: linear-gradient(to bottom, #1d307b, #1f3c5f);
+            padding: 5px;
+            
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+
+        }
+
+        input[type="text"] {
+            width: 30%;
+            padding: 12px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 30px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            outline: none;
+            font-size: large;
+        }
+
+        .swap-icon {
+            font-size: 25px;
+            color: white;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        .search-btn {
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            border: none;
+            padding: 10px 30px;
+            border-radius: 30px;
+            color: white;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background-color: #3b0080;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 30px auto;
+            max-width: 450px;
+        }
+
+        .action-item {
+            background-color: rgb(205, 205, 205);
+            color: black;
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .action-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .action-item img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .footer img {
+            height: 50px;
+            vertical-align: middle;
+            
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Search Form -->
+        <form action="{{ url_for('search') }}" method="POST">
+            <div class="search-container">
+                <center>
+                    <input type="text" id="source" name="source" placeholder="Source location" required>
+                    <div class="swap-icon" onclick="swapValues()">&#x21C5;</div>
+                    <input type="text" id="destination" name="destination" placeholder="Destination location" required>
+                    <br>
+                    <button class="search-btn" type="submit">Search</button>
+                </center>
+            </div>
+        </form>
+
+        <!-- Action Grid -->
+        <div class="actions-grid">
+            <div class="action-item">
+                <img src="{{ url_for('static', filename='bus logo.png') }}" alt="Fast Ride">
+                <p>Fast Ride</p>
+            </div>
+            <div class="action-item">
+                <img src="{{ url_for('static', filename='find.png') }}" alt="Find Route">
+                <p>Find Route</p>
+            </div>
+            <div class="action-item">
+                <img src="{{ url_for('static', filename='more route.png') }}" alt="Find More Routes">
+                <p>Find More Routes</p>
+            </div>
+            <div class="action-item">
+                <img src="{{ url_for('static', filename='near by.png') }}" alt="Nearby">
+                <p>Nearby</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <img src="{{url_for('static', filename='main logo.png')}}" alt="Easy Bus Ride Logo">
+            <p>Easy Bus Ride - Travel Safe & Quick</p>
+        </div>
+    </div>
+
+    <script>
+        function swapValues() {
+            var source = document.getElementById('source').value;
+            var destination = document.getElementById('destination').value;
+
+            // Swap the values
+            document.getElementById('source').value = destination;
+            document.getElementById('destination').value = source;
+        }
+    </script>
+</body>
+
+</html>
